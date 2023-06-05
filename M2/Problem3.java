@@ -21,6 +21,26 @@ public class Problem3 {
         Object[] output = new Object[arr.length];
 
         //TODO convert each value to positive
+        // aa2836/6-5-2023
+        int k;
+        for (k = 0; k < arr.length; k++){
+            if (arr[k] instanceof Integer){
+                Integer val1 = (Integer) arr[k];
+                output[k] = Math.abs(val1);
+            }
+            else if (arr[k] instanceof Double){
+                Double val2 = (Double) arr[k];
+                output[k] = Math.abs(val2);
+            }
+            else if (arr[k] instanceof String){
+                String val3 = (String) arr[k];
+                try{
+                    output[k]=Math.abs(Integer.parseInt(val3));
+                } catch (NumberFormatException e){
+                    output [k] = null;
+                }
+            }
+        }
         //set the result to the proper index of the output array
         //hint: don't forget to handle the data types properly
         

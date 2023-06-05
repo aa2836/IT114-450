@@ -19,7 +19,14 @@ public class Problem1 {
         System.out.println("Processing Array:" + Arrays.toString(arr));
         System.out.println("Odds output:");
         //TODO add/edit code here
-        
+        // aa2836/6-5-2023
+        int i;
+        for (i = 0; i < arr.length; i++){
+            if (arr[i] % 2 !=0){
+                System.out.println(arr[i] + " ");
+            }
+        }
+
         
         //end add/edit section
         System.out.println();

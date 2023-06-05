@@ -20,9 +20,14 @@ public class Problem2 {
         double total = 0;
         String totalOutput = "";
         //TODO add/edit code here
+        // aa2836/6-5-2023
+        int i;
+        for(i = 0; i < arr.length; i++){
+            total += arr[i];
+        }
         
-       
         //set the double to a string variable
+        total = Math.round(total*100)/100.0;
         totalOutput = total+"";
         //end add/edit section
         System.out.println("Total is " + totalOutput);

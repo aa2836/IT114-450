@@ -6,11 +6,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class Server {
     int port = 3001;
     // connected clients
     private List<ServerThread> clients = new ArrayList<ServerThread>();
+    private boolean gameActive = false;
+    private int hiddenNumber;
+
 
     private void start(int port) {
         this.port = port;
@@ -82,8 +86,77 @@ public class Server {
             }
             return true;
         }
+        // aa2836
+        // server-side activity 1
+        // coin toss
+        
+        if (message.equals("flip") || message.equals("toss") || message.equals("coin")){
+            String userName = getClientName(clientId); // gets the users name(used 'Bob' in this example)
+            String result;
+            Random random = new Random(); // Randomly genarates true or false
+            if (random.nextBoolean()){
+                result = "heads";
+            } else {
+                result = "tails";
+            }
+            String response = String.format( userName +" flipped a coin and got "+result + " "); // displays the messages 
+            broadcast(response, clientId);
+            return true; 
+
+        }
+
+        
+        // server-side activity 2
+        // simple number guesser 
+        if (message.equalsIgnoreCase("start")) { // starts the game 
+            if (!gameActive) { // if the game not active 
+                gameActive = true; // activates the game
+                hiddenNumber = generateRandomNumber(); // calling the random number genarator function 
+                broadcast("Game started! Guess the number.", 0); // displays this message 
+            }
+            return true;
+        } else if (message.equalsIgnoreCase("stop")) { // ends the game
+            if (gameActive) { // if the game is active
+                gameActive = false; // kills the game
+                broadcast("Game stopped. Guesses will be treated as regular messages.", 0);
+            } // displays this message 
+            return true;
+        } else if (message.toLowerCase().startsWith("guess ")) {
+            if (gameActive) {
+                String guessCommand = message.substring(6); // Remove "guess " from the message
+                try {
+                    int guess = Integer.parseInt(guessCommand);// takes the number entered with guess
+                    String result = checkGuess(clientId, guess); // calls the checkguess funtion 
+                    broadcast(result, clientId); // gives an output based on if the guess is correct or not 
+                } catch (NumberFormatException e) {
+                    broadcast("Invalid guess format. Please use 'guess <number>'.", clientId);
+                }
+            } else {
+                broadcast("Game is not active. Guesses will not be considered.", clientId);
+            }
+            return true;
+        }
+        
+        
         return false;
     }
+    private String checkGuess(long clientId, int guess) {
+        if (guess == hiddenNumber) {
+            String userName = getClientName(clientId); // gets the users name(used 'Bob' in this example)
+            gameActive = false;
+            return String.format(userName +" guessed "+ guess+" and it is correct!"); // when the guess is correct
+        } else {
+            String userName = getClientName(clientId);
+            return String.format(userName +" guessed "+ guess+" and it is not correct!"); // when the guess is not correct
+        }
+    }
+
+    private int generateRandomNumber() {
+        Random random = new Random();
+        return random.nextInt(10) + 1; // Generates a random number between 1 and 10
+    }
+    private String getClientName(long clientId) {return "bob";}
+    
     public static void main(String[] args) {
         System.out.println("Starting Server");
         Server server = new Server();

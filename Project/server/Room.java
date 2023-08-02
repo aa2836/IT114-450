@@ -181,9 +181,12 @@ public class Room implements AutoCloseable {
 			Iterator<ServerThread> iter = clients.iterator();
 			while (iter.hasNext()) {
 				ServerThread client = iter.next();
-				boolean messageSent = client.sendMessage(from, message);
-				if (!messageSent) {
-					handleDisconnect(iter, client);
+				if (client != sender && !client.isMuted()){
+					boolean messageSent = client.sendMessage(from, message);
+					if (!messageSent) {
+						handleDisconnect(iter, client);
+					}
+				
 				}
 			}
 		}

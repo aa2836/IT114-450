@@ -4,14 +4,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class Server {
     int port = 3001;
     // connected clients
     private List<ServerThread> clients = new ArrayList<ServerThread>();
+    private Map<Long, Set<String>> mutedUsers = new HashMap<>();
+    private List<ServerThread> threads = new ArrayList<>();
+
     private boolean gameActive = false;
     private int hiddenNumber;
 
@@ -49,8 +56,12 @@ public class Server {
     
     protected synchronized void broadcast(String message, long id) {
         if(processCommand(message, id)){
-
-            return;
+            for (ServerThread thread : threads) {
+            // Check if the sender is muted for the receiver
+            if (!mutedUsers.containsKey(thread.getId()) || !mutedUsers.get(thread.getId()).contains(thread.getUsername())) {
+            thread.send(message);
+        }
+    }
         }
         // let's temporarily use the thread id as the client identifier to
         // show in all client's chat. This isn't good practice since it's subject to
@@ -170,4 +181,27 @@ public class Server {
         server.start(port);
         System.out.println("Server Stopped");
     }
+    public void privateMessage(String username, String message, long threadId) {
+        if (!mutedUsers.containsKey(threadId)) {
+            mutedUsers.put(threadId, new HashSet<>());
+        }
+        mutedUsers.get(threadId).add(username);
+    }
+
+    public void muteUser(String username, long threadId) {
+        if (mutedUsers.containsKey(threadId)) {
+            mutedUsers.get(threadId).remove(username);
+        }
+
+    }
+    public void unmuteUser(String username, String message, long threadId) {
+        for (ServerThread thread : threads) {
+            if (thread.getId() == threadId || thread.getUsername().equals(username)) {
+                thread.send(message);
+            }
+        }   
+
+
+    }
+
 }

@@ -122,6 +122,14 @@ public class Room implements AutoCloseable {
 	}
 
 	// Command helper methods
+	protected synchronized ServerThread findClientByName(String name) {
+        for (ServerThread client : clients) {
+            if (client.getClientName().equalsIgnoreCase(name)) {
+                return client;
+            }
+        }
+        return null; // Return null if the client with the specified name is not found
+    }
 
 	protected static void getRooms(String query, ServerThread client) {
 		String[] rooms = Server.INSTANCE.getRooms(query).toArray(new String[0]);

@@ -24,6 +24,7 @@ public class ServerThread extends Thread {
     private Room currentRoom;
     private static Logger logger = Logger.getLogger(ServerThread.class.getName());
     private long myId;
+    private boolean isMuted = false;
 
     public void setClientId(long id) {
         myId = id;
@@ -194,12 +195,28 @@ public class ServerThread extends Thread {
                 Room.disconnectClient(this, getCurrentRoom());
                 break;
             case MESSAGE:
-                if (currentRoom != null) {
-                    currentRoom.sendMessage(this, p.getMessage());
+                String message = p.getMessage();
+                if (message.startsWith("/roll")) {
+                    processRollCommand(message);
+                } else if (message.startsWith("/flip")) {
+                    processFlipCommand();
+                } else if (message.startsWith("@")) {
+                    processPrivateMessage(message);
+                } else if (message.startsWith("mute ")){
+                    processMuteCommand(message);
+
+                } else if (message.startsWith("unmute ")){
+                    processUnmuteCommand(message);
+
                 } else {
-                    // TODO migrate to lobby
-                    logger.log(Level.INFO, "Migrating to lobby on message with null room");
-                    Room.joinRoom("lobby", this);
+                
+                    if (currentRoom != null) {
+                        currentRoom.sendMessage(this, p.getMessage());
+                    } else {
+                        // TODO migrate to lobby
+                        logger.log(Level.INFO, "Migrating to lobby on message with null room");
+                        Room.joinRoom("lobby", this);
+                    }
                 }
                 break;
             case GET_ROOMS:
@@ -216,7 +233,116 @@ public class ServerThread extends Thread {
 
         }
 
+
     }
+
+    private void processRollCommand(String message) {
+    try {
+        if (message.contains("d")) {
+            // Format 2: /roll #d#
+            String[] rollParts = message.substring(6).split("d");
+            if (rollParts.length == 2) {
+                int numDice = Integer.parseInt(rollParts[0]);
+                int numSides = Integer.parseInt(rollParts[1]);
+                if (numDice > 0 && numSides > 0) {
+                    int result = 0;
+                    StringBuilder rollResult = new StringBuilder("Roll result: ");
+                    for (int i = 0; i < numDice; i++) {
+                        int roll = (int) (Math.random() * numSides) + 1;
+                        result += roll;
+                        rollResult.append(roll);
+                        if (i < numDice - 1) {
+                            rollResult.append(", ");
+                        }
+                    }
+                    rollResult.append(". Total: ").append(result);
+                    // Broadcast the roll result to all clients in the room
+                    if (currentRoom != null) {
+                        currentRoom.sendMessage(this, rollResult.toString());
+                    }
+                }
+            }
+        } else {
+            // Format 1: /roll 0 - X or 1 - X
+            int max = Integer.parseInt(message.substring(6).trim());
+            if (max > 0) {
+                int result = (int) (Math.random() * max) + 1;
+                String rollResult = "Roll result: " + result;
+                // Broadcast the roll result to all clients in the room
+                if (currentRoom != null) {
+                    currentRoom.sendMessage(this, rollResult);
+                }
+            }
+        }
+    } catch (NumberFormatException e) {
+        // Handle invalid roll command
+        logger.log(Level.WARNING, "Invalid roll command: " + message);
+    }
+}
+
+    private void processFlipCommand() {
+        String result = (Math.random() < 0.5) ? "Heads" : "Tails";
+        String flipResult = "Coin flip result: " + result;
+        // Broadcast the flip result to all clients in the room
+        if (currentRoom != null) {
+            currentRoom.sendMessage(this, flipResult);
+        }
+    }
+
+    private void processPrivateMessage(String message) {
+        // Extract receiver's username from the message
+        int spaceIndex = message.indexOf(" ");
+        if (spaceIndex != -1) {
+            String receiverName = message.substring(1, spaceIndex);
+            String privateMessage = message.substring(spaceIndex + 1);
+            // Find the receiver in the current room
+            if (currentRoom != null) {
+                ServerThread receiver = currentRoom.findClientByName(receiverName);
+                if (receiver != null) {
+                    // Send the private message to the sender and receiver only
+                    sendMessage(getClientId(), "You whispered to " + receiverName + ": " + privateMessage);
+                    receiver.sendMessage(getClientId(), getClientName() + " whispered to you: " + privateMessage);
+                } else {
+                    sendMessage(getClientId(), "User " + receiverName + " not found in the room.");
+                }
+            }
+        }
+    }   
+
+    private void processMuteCommand(String message) {
+        String targetUsername = message.substring(5).trim();
+        if (currentRoom != null) {
+            ServerThread targetClient = currentRoom.findClientByName(targetUsername);
+            if (targetClient != null) {
+                targetClient.setMuted(true);
+                sendMessage(getClientId(), "You have muted " + targetUsername + ".");
+            } else {
+                sendMessage(getClientId(), "User " + targetUsername + " not found in the room.");
+            }
+        }
+    }
+
+    private void processUnmuteCommand(String message) {
+        String targetUsername = message.substring(7).trim();
+        if (currentRoom != null) {
+            ServerThread targetClient = currentRoom.findClientByName(targetUsername);
+            if (targetClient != null) {
+                targetClient.setMuted(false);
+                sendMessage(getClientId(), "You have unmuted " + targetUsername + ".");
+            } else {
+                sendMessage(getClientId(), "User " + targetUsername + " not found in the room.");
+            }
+        }
+    }   
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
+    public void setMuted(boolean isMuted) {
+        this.isMuted = isMuted;
+    }
+
 
     private void cleanup() {
         info("Thread cleanup() start");

@@ -211,11 +211,17 @@ public class ServerThread extends Thread {
                 // if it does then execute processflipCommand
                 } else if (message.startsWith("/flip")) {
                     processFlipCommand();
+                //checks if messege starts wuth @
+                // if it doesn then it excecutes processPrivateMessage
                 } else if (message.startsWith("@")) {
                     processPrivateMessage(message);
+                // checks if messeege starts with mute 
+                // if it does then excecutes processMuteCommand
                 } else if (message.startsWith("mute ")){
                     processMuteCommand(message);
 
+                // checks if messege starts with unmute 
+                // if it does then excecutes processUnmuteCommand
                 } else if (message.startsWith("unmute ")){
                     processUnmuteCommand(message);
 
@@ -333,20 +339,27 @@ public class ServerThread extends Thread {
         }
     }
 
+    // aa2836 7-24-2023
     private void processPrivateMessage(String message) {
         // Extract receiver's username from the message
         int spaceIndex = message.indexOf(" ");
+        // checks for space 
         if (spaceIndex != -1) {
+            // takes the recivers username from the messege 
             String receiverName = message.substring(1, spaceIndex);
+            // takes the private messsge
             String privateMessage = message.substring(spaceIndex + 1);
             // Find the receiver in the current room
             if (currentRoom != null) {
                 ServerThread receiver = currentRoom.findClientByName(receiverName);
+                // checks if the the reciver is in the current room
                 if (receiver != null) {
                     // Send the private message to the sender and receiver only
-                    sendMessage(getClientId(), "You whispered to " + receiverName + ": " + privateMessage);
-                    receiver.sendMessage(getClientId(), getClientName() + " whispered to you: " + privateMessage);
+                    sendMessage(getClientId(), receiverName + ": " + privateMessage);
+                    // sends private message to reciver
+                    receiver.sendMessage(getClientId(), privateMessage);
                 } else {
+                    // if the reciver is not found
                     sendMessage(getClientId(), "User " + receiverName + " not found in the room.");
                 }
             }
@@ -354,35 +367,49 @@ public class ServerThread extends Thread {
     }   
 
     private void processMuteCommand(String message) {
+        //aa2836 7-24-2023
+        // takes the target username
         String targetUsername = message.substring(5).trim();
         if (currentRoom != null) {
             ServerThread targetClient = currentRoom.findClientByName(targetUsername);
             if (targetClient != null) {
+                // sets taregt user's serverThread to true
+                // is muted
                 targetClient.setMuted(true);
-                sendMessage(getClientId(), "You have muted " + targetUsername + ".");
+                // lets the sender know the user in muted
+                sendMessage(getClientId(), " " + targetUsername + " is now muted");
             } else {
+                // if the user is not in the same room
                 sendMessage(getClientId(), "User " + targetUsername + " not found in the room.");
             }
         }
     }
 
     private void processUnmuteCommand(String message) {
+        // takes the target username
         String targetUsername = message.substring(7).trim();
+        
         if (currentRoom != null) {
+            // checks if the cllient is in the room
             ServerThread targetClient = currentRoom.findClientByName(targetUsername);
             if (targetClient != null) {
+                //sets taregt user's serverThread to false
+                // is unmuted
                 targetClient.setMuted(false);
-                sendMessage(getClientId(), "You have unmuted " + targetUsername + ".");
+                // lets the sender know the user in unmuted
+                sendMessage(getClientId(), " " + targetUsername + " is now unmuted");
             } else {
+                // if the user not in the room
                 sendMessage(getClientId(), "User " + targetUsername + " not found in the room.");
             }
         }
     }   
-
+    //returns isMuted of the ServerThread 
+    // lets user know muted or not.
     public boolean isMuted() {
         return isMuted;
     }
-
+    //sets isMuted of the ServerThread to the specified value muting or unmuting user.
     public void setMuted(boolean isMuted) {
         this.isMuted = isMuted;
     }

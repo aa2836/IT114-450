@@ -167,13 +167,14 @@ public class Room implements AutoCloseable {
 	 * @param sender  The client sending the message
 	 * @param message The message to broadcast inside the room
 	 */
-	protected synchronized void sendMessage(ServerThread sender, String message) {
+	// aa2836 7-24-2023
+	 protected synchronized void sendMessage(ServerThread sender, String message) {
 		if (!isRunning) {
 			return;
 		}
 		info("Sending message to " + clients.size() + " clients");
 		if (sender != null && processCommands(message, sender)) {
-			// it was a command, don't broadcast
+			// command, don't broadcast
 			return;
 		}
 		long from = (sender == null) ? Constants.DEFAULT_CLIENT_ID : sender.getClientId();
@@ -181,9 +182,13 @@ public class Room implements AutoCloseable {
 			Iterator<ServerThread> iter = clients.iterator();
 			while (iter.hasNext()) {
 				ServerThread client = iter.next();
+				// chekes client muted or not before sending messeege 
 				if (!client.isMuted()){
+					// if not muted 
+					// send messege to clinet with form to identify sender
 					boolean messageSent = client.sendMessage(from, message);
 					if (!messageSent) {
+						// disconnection handel
 						handleDisconnect(iter, client);
 					}
 				

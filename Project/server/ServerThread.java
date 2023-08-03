@@ -202,8 +202,13 @@ public class ServerThread extends Thread {
                 break;
             case MESSAGE:
                 String message = p.getMessage();
+                //aa2836-07/24/2023
+                // checks if starts with /roll
+                // if it does then execute processRollsCommand
                 if (message.startsWith("/roll")) {
                     processRollCommand(message);
+                // checks if starts with /flip
+                // if it does then execute processflipCommand
                 } else if (message.startsWith("/flip")) {
                     processFlipCommand();
                 } else if (message.startsWith("@")) {
@@ -261,25 +266,34 @@ public class ServerThread extends Thread {
 
 
     private void processRollCommand(String message) {
-    try {
+    //aa2836 7-24-2023
+        try {
+        //checks to if the message have 'd'
         if (message.contains("d")) {
             // Format 2: /roll #d#
+            // Splits to get the number of dice and side
             String[] rollParts = message.substring(6).split("d");
             if (rollParts.length == 2) {
+                // gets the number of dice 
                 int numDice = Integer.parseInt(rollParts[0]);
+                // gets the number side
                 int numSides = Integer.parseInt(rollParts[1]);
                 if (numDice > 0 && numSides > 0) {
                     int result = 0;
-                    StringBuilder rollResult = new StringBuilder("Roll result: ");
+                    StringBuilder rollResult = new StringBuilder("<b>Roll result:</b> ");
+                    // rolls the dice
                     for (int i = 0; i < numDice; i++) {
+                        //genarates random roll between the parameters.
                         int roll = (int) (Math.random() * numSides) + 1;
                         result += roll;
+                        // adds the role value to the string
                         rollResult.append(roll);
                         if (i < numDice - 1) {
-                            rollResult.append(", ");
+                            rollResult.append("<b>, </b>");
                         }
                     }
-                    rollResult.append(". Total: ").append(result);
+                    // adds the total result
+                    rollResult.append("<b>. Total: ").append(result).append("</b>");
                     // Broadcast the roll result to all clients in the room
                     if (currentRoom != null) {
                         currentRoom.sendMessage(this, rollResult.toString());
@@ -288,10 +302,13 @@ public class ServerThread extends Thread {
             }
         } else {
             // Format 1: /roll 0 - X or 1 - X
+            // takes the maximum value 
             int max = Integer.parseInt(message.substring(6).trim());
+            // checks for positive value
             if (max > 0) {
+                //generates a random result
                 int result = (int) (Math.random() * max) + 1;
-                String rollResult = "Roll result: " + result;
+                String rollResult = "<b>Roll result: " + result+" </b>";
                 // Broadcast the roll result to all clients in the room
                 if (currentRoom != null) {
                     currentRoom.sendMessage(this, rollResult);
@@ -305,13 +322,16 @@ public class ServerThread extends Thread {
 }
 
     private void processFlipCommand() {
+        //aa2836 7-24-2023
+        // Getting a random number between 0 and 1
+        // if lesss then 0.5 result heads or else result tails
         String result = (Math.random() < 0.5) ? "Heads" : "Tails";
-        String flipResult = "Coin flip result: " + result;
+        String flipResult = "<b>Coin flip result: " + result+" </b>";
         // Broadcast the flip result to all clients in the room
         if (currentRoom != null) {
             currentRoom.sendMessage(this, flipResult);
         }
-}
+    }
 
     private void processPrivateMessage(String message) {
         // Extract receiver's username from the message

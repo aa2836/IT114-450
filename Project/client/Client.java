@@ -115,6 +115,7 @@ public enum Client {
         out.writeObject(p);// TODO force throw each
         logger.log(Level.INFO, "Sent Payload: " + p);
     }
+    
 
     // end send methods
 

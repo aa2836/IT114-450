@@ -241,6 +241,8 @@ public class Room implements AutoCloseable {
 		}
 	}
 
+	
+
 	private synchronized void handleDisconnect(Iterator<ServerThread> iter, ServerThread client) {
 		if (iter != null) {
 			iter.remove();

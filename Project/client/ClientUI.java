@@ -25,6 +25,9 @@ import Project.client.views.RoomsPanel;
 import Project.client.views.UserInputPanel;
 import Project.common.Constants;
 
+
+
+
 public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     CardLayout card = null;// accessible so we can call next() and previous()
     Container container;// accessible to be passed to card methods
@@ -42,6 +45,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     private UserInputPanel inputPanel;
     private RoomsPanel roomsPanel;
     private ChatPanel chatPanel;
+    
 
     public ClientUI(String title) {
         super(title);// call the parent's constructor
@@ -103,6 +107,13 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         pack();// tells the window to resize itself and do the layout management
         setVisible(true);
     }
+
+    
+    
+    
+
+    
+
     void findAndSetCurrentPanel(){
         for (Component c : container.getComponents()) {
             if (c.isVisible()) {

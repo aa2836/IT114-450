@@ -10,6 +10,7 @@ public class Payload implements Serializable {
      * Determines how to process the data on the receiver's side
      */
     private PayloadType payloadType;
+    
 
     public PayloadType getPayloadType() {
         return payloadType;

@@ -121,11 +121,17 @@ public class ServerThread extends Thread {
     }
 
     public boolean sendMessage(long clientId, String message) {
-        Payload p = new Payload();
-        p.setPayloadType(PayloadType.MESSAGE);
-        p.setClientId(clientId);
-        p.setMessage(message);
-        return send(p);
+        if (!isMuted) {
+            // Process text triggers
+            message = processTextTriggers(message);
+        
+            Payload p = new Payload();
+            p.setPayloadType(PayloadType.MESSAGE);
+            p.setClientId(clientId);
+            p.setMessage(message);
+            return send(p);
+        }
+        return false;
     }
 
     public boolean sendConnectionStatus(long clientId, String who, boolean isConnected) {
@@ -235,6 +241,24 @@ public class ServerThread extends Thread {
 
 
     }
+    private String processTextTriggers(String message) {
+        // Bold trigger: *text*
+        message = message.replaceAll("\\*(.*?)\\*", "<b>$1</b>");
+
+        // Italics trigger: _text_
+        message = message.replaceAll("_(.*?)_", "<i>$1</i>");
+
+        // Underline trigger: +text+
+        message = message.replaceAll("\\+(.*?)\\+", "<u>$1</u>");
+
+        // Color trigger: [color:red]text[/color]
+        message = message.replaceAll("\\[color:red\\](.*?)\\[/color\\]", "<font color=\"red\">$1</font>");
+        message = message.replaceAll("\\[color:blue\\](.*?)\\[/color\\]", "<font color=\"blue\">$1</font>");
+        message = message.replaceAll("\\[color:green\\](.*?)\\[/color\\]", "<font color=\"green\">$1</font>");
+
+        return message;
+    }
+
 
     private void processRollCommand(String message) {
     try {
@@ -287,7 +311,7 @@ public class ServerThread extends Thread {
         if (currentRoom != null) {
             currentRoom.sendMessage(this, flipResult);
         }
-    }
+}
 
     private void processPrivateMessage(String message) {
         // Extract receiver's username from the message

@@ -8,4 +8,5 @@ public interface ICardControls {
     void show(String cardName);
     void addPanel(String name, JPanel panel);
     void connect();
+    void exportChatHistory();
 }

@@ -1,7 +1,7 @@
 package Project.client.views;
 
 import java.awt.BorderLayout;
-
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ContainerEvent;
@@ -14,6 +14,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 
 import Project.client.ClientUtils;
 import Project.client.ICardControls;
@@ -63,11 +64,21 @@ public class UserListPanel extends JPanel {
         });
     }
 
-    protected void addUserListItem(long clientId, String clientName) {
+    protected void addUserListItem(long clientId, String clientName,boolean isMuted, boolean isHighlighted) {
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
+        JPanel userItemPanel = new JPanel(new BorderLayout());
+        // aa2836 8/8/2023
         JEditorPane textContainer = new JEditorPane("text/plain", clientName);
+        // applies gray if the user is muted
+        if (isMuted) {
+            textContainer.setForeground(Color.GRAY);
+        }
+        // applies black when the user in unmuted
+        if (isHighlighted) {
+            textContainer.setForeground(Color.BLACK);
+        }
         textContainer.setName(clientId + "");
         // sizes the panel to attempt to take up the width of the container
         // and expand in height based on word wrapping
@@ -79,6 +90,10 @@ public class UserListPanel extends JPanel {
         // remove background and border (comment these out to see what it looks like
         // otherwise)
         ClientUtils.clearBackground(textContainer);
+        userItemPanel.add(textContainer, BorderLayout.CENTER);
+
+        // Add the user item panel to the user list area
+        content.add(userItemPanel);
         // add to container
         content.add(textContainer);
     }

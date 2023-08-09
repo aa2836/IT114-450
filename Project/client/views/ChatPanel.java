@@ -10,6 +10,8 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ public class ChatPanel extends JPanel {
     private static Logger logger = Logger.getLogger(ChatPanel.class.getName());
     private JPanel chatArea = null;
     private UserListPanel userListPanel;
+    private List<String> chatHistory = new ArrayList<>();
     public ChatPanel(ICardControls controls){
         super(new BorderLayout(10, 10));
         JPanel wrapper = new JPanel();
@@ -40,6 +43,8 @@ public class ChatPanel extends JPanel {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+        //
+        
 
         // wraps a viewport to provide scroll capabilities
         JScrollPane scroll = new JScrollPane(content);
@@ -140,8 +145,11 @@ public class ChatPanel extends JPanel {
             }
         });
     }
+    public List<String> getChatHistory() {
+        return chatHistory;
+    }
     public void addUserListItem(long clientId, String clientName){
-        userListPanel.addUserListItem(clientId, clientName);
+        userListPanel.addUserListItem(clientId, clientName,false,false);
     }
     public void removeUserListItem(long clientId){
         userListPanel.removeUserListItem(clientId);
@@ -173,6 +181,8 @@ public class ChatPanel extends JPanel {
         int preferredHeight = ClientUtils.calcHeightForText(this, text, chatArea.getWidth());
         textContainer.setPreferredSize(new Dimension(chatArea.getWidth(), preferredHeight));
         textContainer.setMaximumSize(textContainer.getPreferredSize());
+        chatHistory.add(text); // Add the text to chat history
+
 
         // Add the text container to the chat area and scroll to the latest message
         chatArea.add(textContainer);

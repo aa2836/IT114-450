@@ -8,11 +8,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -128,6 +132,32 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         }
         System.out.println(currentCardPanel.getName());
     }
+    public void exportChatHistory() {
+    try {
+        JFileChooser fileChooser = new JFileChooser();
+        int userChoice = fileChooser.showSaveDialog(this);
+        if (userChoice == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            FileWriter writer = new FileWriter(selectedFile);
+
+            // Get chat history from the chat panel
+            List<String> chatHistory = chatPanel.getChatHistory();
+
+            // Write chat history to the file
+            for (String message : chatHistory) {
+                writer.write(message + "\n");
+            }
+
+            writer.close();
+
+            JOptionPane.showMessageDialog(this, "Chat history exported successfully.", "Export Completed", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (IOException ex) {
+        ex.printStackTrace();
+    }
+}
+
+//jj
     @Override
     public void next() {
         card.next(container);
@@ -172,6 +202,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         }
         return clientName;
     }
+    
 
     /**
      * Used to handle new client connects/disconnects or existing client lists (one

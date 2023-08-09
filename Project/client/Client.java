@@ -36,6 +36,7 @@ public enum Client {
         return server.isConnected() && !server.isClosed() && !server.isInputShutdown() && !server.isOutputShutdown();
 
     }
+    
 
     /**
      * Takes an ip address and a port to attempt a socket connection to a server.

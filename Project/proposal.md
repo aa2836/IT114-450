@@ -17,13 +17,13 @@
 ### Proposal Checklist and Evidence
 
 - Milestone 1
-  - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone1.md]
+ - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone1.md]
 
 - Milestone 2
  - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone2.md]
 
 - Milestone 3
-  - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone3.md]
+ - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone3.md]
 
 - Milestone 4
-  - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone4.md]
+ - [https://github.com/aa2836/IT114-450/blob/main/Project/milestone4.md]

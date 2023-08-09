@@ -2,8 +2,11 @@ package Project.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +15,10 @@ import Project.common.Constants;
 public class Room implements AutoCloseable {
 	private String name;
 	private List<ServerThread> clients = Collections.synchronizedList(new ArrayList<ServerThread>());
+	private Map<String, List<String>> mutedClients = new HashMap<>();
+	private ConcurrentHashMap<Long, ServerThread> clientsById = new ConcurrentHashMap<>();
+
+
 	private boolean isRunning = false;
 	// Commands
 	private final static String COMMAND_TRIGGER = "/";
@@ -257,10 +264,20 @@ public class Room implements AutoCloseable {
 		sendConnectionStatus(client, false);
 		// sendMessage(null, client.getClientName() + " disconnected");
 	}
+	public void addClientById(long clientId, ServerThread clientThread) {
+        clientsById.put(clientId, clientThread);
+    }
+
+    // Add a method to retrieve the client by their unique ID
+    public ServerThread findClientById(long clientId) {
+        return clientsById.get(clientId);
+    }
 
 	public void close() {
 		Server.INSTANCE.removeRoom(this);
 		isRunning = false;
 		clients = null;
 	}
+
+    
 }

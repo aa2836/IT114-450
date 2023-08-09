@@ -1,10 +1,10 @@
 <table><tr><td> <em>Assignment: </em> IT114 Chatroom Milestone4</td></tr>
 <tr><td> <em>Student: </em> Abdullah Salman (aa2836)</td></tr>
-<tr><td> <em>Generated: </em> 8/8/2023 9:10:50 PM</td></tr>
+<tr><td> <em>Generated: </em> 8/8/2023 9:24:54 PM</td></tr>
 <tr><td> <em>Grading Link: </em> <a rel="noreferrer noopener" href="https://learn.ethereallab.app/homework/IT114-450-M23/it114-chatroom-milestone4/grade/aa2836" target="_blank">Grading</a></td></tr></table>
 <table><tr><td> <em>Instructions: </em> <p>Implement the features from Milestone3 from the proposal document:&nbsp;&nbsp;<a href="https://docs.google.com/document/d/1ONmvEvel97GTFPGfVwwQC96xSsobbSbk56145XizQG4/view">https://docs.google.com/document/d/1ONmvEvel97GTFPGfVwwQC96xSsobbSbk56145XizQG4/view</a></p>
 </td></tr></table>
-<table><tr><td> <em>Deliverable 1: </em> Client can export chat history of their current session (client-side) </td></tr><tr><td><em>Status: </em> <img width="100" height="20" src="https://user-images.githubusercontent.com/54863474/211707834-bf5a5b13-ec36-4597-9741-aa830c195be2.png"></td></tr>
+<table><tr><td> <em>Deliverable 1: </em> Client can export chat history of their current session (client-side) </td></tr><tr><td><em>Status: </em> <img width="100" height="20" src="https://user-images.githubusercontent.com/54863474/211707773-e6aef7cb-d5b2-4053-bbb1-b09fc609041e.png"></td></tr>
 <tr><td><table><tr><td> <em>Sub-Task 1: </em> Add screenshot of related UI</td></tr>
 <tr><td><table><tr><td><img width="768px" src="https://firebasestorage.googleapis.com/v0/b/learn-e1de9.appspot.com/o/assignments%2Faa2836%2F2023-08-09T00.41.01Screenshot%202023-08-08%20at%208.36.36%20PM.png.webp?alt=media&token=11264caf-5444-4008-839d-117df2f61ca1"/></td></tr>
 <tr><td> <em>Caption:</em> <p>sc of Export conversation button as menu item <br></p>
@@ -28,7 +28,7 @@
 </td></tr>
 </table></td></tr>
 <tr><td> <em>Sub-Task 3: </em> Briefly explain how you implemented this</td></tr>
-<tr><td> <em>Response:</em> <p>(missing)</p><br></td></tr>
+<tr><td> <em>Response:</em> <p>first a mine team with button export chat history was created so that<br>went clicked on it it can store users chat history to a file<br>and by invoking &nbsp;exportChatHistory() method. it saves users chat history to a file<br>using a special window. Inside a safe zone where errors are handled, a<br>window pops up where users can pick where to save the chat history.<br>If a location is selected, the code sets up a tool to write<br>the chat data into that location. The chat history comes from a place<br>called chatPanel, which holds all the messages. Each message is put into the<br>file one by one. When everything&#39;s done, the tool is closed, and a<br>message appears saying the chat history was saved.&nbsp;<br></p><br></td></tr>
 </table></td></tr>
 <table><tr><td> <em>Deliverable 2: </em> Client's mute list will persist across sessions (server-side) </td></tr><tr><td><em>Status: </em> <img width="100" height="20" src="https://user-images.githubusercontent.com/54863474/211707834-bf5a5b13-ec36-4597-9741-aa830c195be2.png"></td></tr>
 <tr><td><table><tr><td> <em>Sub-Task 1: </em> Add a screenshot of how the mute list is stored</td></tr>

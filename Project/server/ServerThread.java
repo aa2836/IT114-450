@@ -374,7 +374,7 @@ public class ServerThread extends Thread {
     }   
 
     private void processMuteCommand(String message) {
-        //aa2836 7-24-2023
+        //aa2836 8-8-2023
         // takes the target username
         String targetUsername = message.substring(5).trim();
         if (currentRoom != null) {
@@ -393,7 +393,7 @@ public class ServerThread extends Thread {
                 // Notify the sender that the target user has been muted
                 sendMessage(getClientId(), "You muted " + targetUsername);
 
-                // Notify the muted user
+                // lets the user know who muted them
                 targetClient.sendMessage(getClientId(), getClientName() + " muted you");
             }
         } else {
@@ -408,7 +408,7 @@ public class ServerThread extends Thread {
          
     }
 
-
+    //aa2836 8-8-2023
     private void processUnmuteCommand(String message) {
         // takes the target username
         String targetUsername = message.substring(7).trim();
@@ -424,7 +424,8 @@ public class ServerThread extends Thread {
                 muteList.remove(targetUsername);
                 // lets the sender know the user in unmuted
                 sendMessage(getClientId(), "You Unmuted " + targetUsername + ". ");
-                 targetClient.sendMessage(getClientId(), getClientName() + " unmuted you");
+                 //lets the unmuted client know they got unmuted 
+                targetClient.sendMessage(getClientId(), getClientName() + " unmuted you");
             } else {
                 // If the target user is already unmuted, do not send a repeat message
                 sendMessage(getClientId(), targetUsername + " is already unmuted");

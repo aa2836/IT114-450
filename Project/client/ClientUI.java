@@ -149,10 +149,11 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
             }
 
             writer.close();
-
+            // Show a dialog to inform the user that the export was successful
             JOptionPane.showMessageDialog(this, "Chat history exported successfully.", "Export Completed", JOptionPane.INFORMATION_MESSAGE);
         }
     } catch (IOException ex) {
+        // If an IOException occurs during file operations, print the stack trace for debugging
         ex.printStackTrace();
     }
 }
